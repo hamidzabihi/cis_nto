@@ -68,6 +68,15 @@ contains
             allocate(s_mo_b(mos1%n_mo_b, mos2%n_mo_b))
             call mat_ge_mmm(mos1%cb, s_ao, mos2%cb, s_mo_b, transa='T')
         end if
+        if (trim(adjustl(path1)) == trim(adjustl(path2))) then
+            ! --- Self-overlap: identical wavefunctions, so S_mo must be identity.
+            !     The CP2K [5D7F] convention leaves off-diagonal contamination
+            !     that diagonal normalization cannot remove.  Setting S_mo = I
+            !     is mathematically exact for this case (see issue #8).
+            call set_identity_overlap(s_mo_a)
+            if (allocated(s_mo_b)) call set_identity_overlap(s_mo_b)
+        end if
+
         if (print_level >= 3) then
             write(stdout, '(5x,a)') 'Diagonal of the alpha MO overlap matrix: '
             write(stdout, '(6x,15f8.4)') [( s_mo_a(i, i), i=1, min(size(s_mo_a, 1), size(s_mo_a, 2)) )]
@@ -79,5 +88,24 @@ contains
         time_mo = omp_get_wtime() - time0
     end subroutine overlap_mo
 
+
+
+    !---------------------------------------------------------------------------
+    ! SUBROUTINE: set_identity_overlap
+    !> @brief Replace a self-overlap MO matrix with the identity.
+    !> @details For self-overlap (path1 == path2) the bra and ket MOs are identical,
+    !>          so <MO_i|MO_j> = delta_ij by definition.  This bypasses the CP2K
+    !>          [5D7F] basis convention which introduces off-diagonal noise that
+    !>          diagonal-only normalization cannot remove.  See issue #8.
+    !---------------------------------------------------------------------------
+    subroutine set_identity_overlap(s)
+        real(dp), intent(inout) :: s(:, :)
+        integer :: i, n
+        n = min(size(s, 1), size(s, 2))
+        s = 0.0_dp
+        do i = 1, n
+            s(i, i) = 1.0_dp
+        end do
+    end subroutine set_identity_overlap
 
 end module overlap_mo_mod

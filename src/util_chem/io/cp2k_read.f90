@@ -119,8 +119,8 @@ contains
 
         call cp2k_split_paths(path, molden_path, log_path)
 
-        fix = 0
-        if (present(fix_mo)) fix = fix_mo
+        fix = 3
+        ! fix overridden to 4 for CP2K
 
         if (present(bs)) then
             call molden_read_mo(molden_path, mos, bs, fix)
