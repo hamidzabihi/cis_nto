@@ -122,3 +122,4 @@ enable_language (C)
   add_executable(convert.exe ${SOURCES_CONV})
   target_link_libraries(convert.exe ${LINALG_LIBS} theochemutil ${LINKLIBS})
 
+# CMake build targets cleaned.
