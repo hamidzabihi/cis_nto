@@ -113,10 +113,11 @@ enable_language (C)
 
   add_executable(cis_overlap.exe ${SOURCES_OLAP})
   target_compile_definitions(cis_overlap.exe PRIVATE L2M=1)
-  target_link_libraries(cis_overlap.exe ${LINALG_LIBS} theochemutil)
+  target_link_libraries(cis_overlap.exe ${LINALG_LIBS} theochemutil ${LINKLIBS})
 
   add_executable(cis_nto.exe ${SOURCES_GNTO})
-  target_link_libraries(cis_nto.exe ${LINALG_LIBS} theochemutil)
+  target_link_libraries(cis_nto.exe ${LINALG_LIBS} theochemutil ${LINKLIBS})
 
   add_executable(convert.exe ${SOURCES_CONV})
-  target_link_libraries(convert.exe ${LINALG_LIBS} theochemutil)
+  target_link_libraries(convert.exe ${LINALG_LIBS} theochemutil ${LINKLIBS})
+
