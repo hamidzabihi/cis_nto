@@ -8,6 +8,9 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 BOLD='\033[1m'
 
+# Get the absolute path of the directory where this script lives
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 echo -e "${CYAN}${BOLD}================================================================${NC}"
 echo -e "${CYAN}${BOLD}  CIS_NTO - CP2K INTERFACE MASTER VALIDATION${NC}"
 echo -e "${CYAN}${BOLD}  Date: $(date)${NC}"
@@ -18,9 +21,8 @@ echo -e "${CYAN}${BOLD}=========================================================
 # -----------------------------------------------------------------
 echo -e "${BOLD}[1/6] ML-BP Reader Accuracy (vs. J. Phys. Chem. Lett. 2025 Paper)${NC}"
 echo "Matches leading CI weights to the 4th decimal place."
-cd mlbp
+cd "$SCRIPT_DIR/mlbp"
 python3 print_table.py
-cd ..
 echo ""
 
 # -----------------------------------------------------------------
@@ -28,6 +30,7 @@ echo ""
 # -----------------------------------------------------------------
 echo -e "${BOLD}[2/6] Adamantane NTO Cube Generation & Physics Checks${NC}"
 echo "Verifies L2 integrals = 1.0 and non-zero cell counts."
+cd "$SCRIPT_DIR"
 python3 validate_adamantane.py | grep -E "PASS|L2|OK|Summary"
 echo ""
 
@@ -39,7 +42,8 @@ echo "Proof that the ONTO algorithm yields exact identity for self-overlap."
 VAC="${VAC:-$HOME/Project_ML_BP_revision1/03-OVERLAPS/di_vacancy}"
 if [ -d "$VAC" ]; then
     cd "$VAC"
-    python3 "$(dirname "$0")/validate_overlap.py" 2>/dev/null | grep -A 10 "T1 — SELF-OVERLAP IDENTITY" | head -n 12
+    echo "  (Running validate_overlap.py...)"
+    python3 "$SCRIPT_DIR/validate_overlap.py" 2>/dev/null | grep -A 10 "SELF-OVERLAP" | head -n 12
     echo ""
     
     # -----------------------------------------------------------------
@@ -47,8 +51,8 @@ if [ -d "$VAC" ]; then
     # -----------------------------------------------------------------
     echo -e "${BOLD}[4/6] Overlap Physics Tracking (T5/T6)${NC}"
     echo "Proof that S1↔S2 is physical mixing and S1↔S4 is correctly isolated."
-    python3 "$(dirname "$0")/validate_overlap.py" 2>/dev/null | grep -A 15 "T5 — DECAY RATE FIT" | head -n 12
-    python3 "$(dirname "$0")/validate_overlap.py" 2>/dev/null | grep -A 12 "T6 — PHYSICS vs RESIDUAL"
+    python3 "$SCRIPT_DIR/validate_overlap.py" 2>/dev/null | grep -A 15 "T5" | head -n 12
+    python3 "$SCRIPT_DIR/validate_overlap.py" 2>/dev/null | grep -A 12 "T6"
     echo ""
     
     # -----------------------------------------------------------------
@@ -72,7 +76,6 @@ if [ -d "$VAC" ]; then
     echo ""
 else
     echo "  [SKIP] External di_vacancy dataset not found at $VAC"
-    echo "         (Sections 3, 4, and 6 require the 20-frame MD trajectory)"
 fi
 
 # -----------------------------------------------------------------
@@ -95,8 +98,7 @@ echo -e "${CYAN}${BOLD}=========================================================
 # -----------------------------------------------------------------
 echo -e "${BOLD}[7/7] cis_nto SVD Algorithm (Multi-Configurational Proof)${NC}"
 echo "Proof that cis_nto performed the SVD (CI weight != NTO eigenvalue for multi-config states)."
-cd "$(dirname "$0")"
-cd mlbp
+cd "$SCRIPT_DIR/mlbp"
 python3 - << 'PYEOF'
 import re
 from pathlib import Path
