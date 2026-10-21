@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.18)
 project (NAD_program)
 enable_language (Fortran)
-enable_language (C) 
+enable_language (C)
 
 ###################################################################################################
 # Options.                                                                                        #
