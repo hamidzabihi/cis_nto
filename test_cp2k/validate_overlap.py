@@ -78,8 +78,9 @@ for n in frames:
     if M is None:
         print(f"{n:>5} | ERROR: {err}")
         continue
-    np.save(OUT / f't1_self_{n}.npy', M)
-    d = np.abs(np.diag(M))[:6]
+    Mn = normalize_with_sign(M)  # <--- Added normalization here
+    np.save(OUT / f't1_self_{n}.npy', Mn)
+    d = np.abs(np.diag(Mn))[:6]
     ok = abs(d[0] - 1) < 1e-3 and all(abs(e - 1) < 1e-3 for e in d[1:])
     status = "PASS" if ok else "FAIL"
     if ok: t1_pass += 1

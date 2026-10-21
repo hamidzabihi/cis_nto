@@ -8,6 +8,14 @@ Normalization:
   bohr^-3) produces a comparable isosurface for all orbitals — matching the
   convention used for the publication figures.
 
+Notes on Cartesian ordering:
+  CP2K writes Molden Cartesian functions in the following orders:
+
+    d:  xx, xy, xz, yy, yz, zz
+    f:  xxx, xxy, xxz, xyy, xyz, xzz, yyy, yyz, yzz, zzz
+    g:  xxxx, xxxy, xxxz, xxyy, xxyz, xxzz, xyyy, xyyz, xyzz, xzzz,
+        yyyy, yyyz, yyzz, yzzz, zzzz
+
 Other fixes over the previous version:
   * Origin and spacing are computed once and used both for evaluation and for
     the cube header, so they cannot drift apart.
@@ -15,8 +23,11 @@ Other fixes over the previous version:
     guaranteeing the whole molecule is covered on every axis.
   * Atom block parsing is robust to leading whitespace and to both
     "[Atoms] AU" and "[Atoms] Angs" headers.
-  * Coefficients shorter than the AO list are zero-padded instead of
-    silently truncating the basis.
+  * Coefficients are placed at their true AO index, so a sparse [MO] block
+    is handled correctly (missing coefficients default to zero).
+  * [GTO] parsing now handles CP2K's two-token atom-separator lines
+    ("<atom_index> <n_blocks>"), e.g. "    1 0".  Without this, every shell
+    was assigned to atom 1, producing shapeless isosurfaces.
 """
 import sys
 import numpy as np
@@ -26,19 +37,25 @@ L_MAP = {'s': 0, 'p': 1, 'd': 2, 'f': 3, 'g': 4, 'h': 5}
 
 
 def cart_terms(l):
+    """Return Cartesian exponents (p, q, r) in CP2K's Molden ordering."""
     if l == 0:
         return [(0, 0, 0)]
     if l == 1:
         return [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     if l == 2:
-        return [(2,0,0),(0,2,0),(0,0,2),(1,1,0),(1,0,1),(0,1,1)]
+        # xx, xy, xz, yy, yz, zz
+        return [(2, 0, 0), (1, 1, 0), (1, 0, 1),
+                (0, 2, 0), (0, 1, 1), (0, 0, 2)]
     if l == 3:
-        return [(3,0,0),(0,3,0),(0,0,3),(2,1,0),(2,0,1),
-                (1,2,0),(0,2,1),(1,0,2),(0,1,2),(1,1,1)]
+        # xxx, xxy, xxz, xyy, xyz, xzz, yyy, yyz, yzz, zzz
+        return [(3, 0, 0), (2, 1, 0), (2, 0, 1),
+                (1, 2, 0), (1, 1, 1), (1, 0, 2),
+                (0, 3, 0), (0, 2, 1), (0, 1, 2), (0, 0, 3)]
     if l == 4:
-        return [(4,0,0),(0,4,0),(0,0,4),(3,1,0),(3,0,1),
-                (1,3,0),(0,3,1),(1,0,3),(0,1,3),(2,2,0),
-                (2,0,2),(0,2,2),(2,1,1),(1,2,1),(1,1,2)]
+        return [(4, 0, 0), (3, 1, 0), (3, 0, 1),
+                (2, 2, 0), (2, 1, 1), (2, 0, 2),
+                (1, 3, 0), (1, 2, 1), (1, 1, 2), (1, 0, 3),
+                (0, 4, 0), (0, 3, 1), (0, 2, 2), (0, 1, 3), (0, 0, 4)]
     return [(0, 0, 0)]
 
 
@@ -46,7 +63,7 @@ def read_molden(fname):
     lines = open(fname).readlines()
     atoms = []
     shells = []
-    coeffs = []
+    raw_mo = []
 
     i = 0
     while i < len(lines):
@@ -83,15 +100,21 @@ def read_molden(fname):
 
                 p = sl.split()
 
-                if len(p) == 1:
-                    try:
-                        center = int(p[0])
-                        i += 1
-                        continue
-                    except ValueError:
-                        i += 1
-                        continue
+                # Atom separator line: "<atom_index> <n_blocks>"
+                if (len(p) == 2
+                        and p[0].lstrip('-').isdigit()
+                        and p[1].lstrip('-').isdigit()):
+                    center = int(p[0])
+                    i += 1
+                    continue
 
+                # Single-integer atom separator (older format)
+                if len(p) == 1 and p[0].lstrip('-').isdigit():
+                    center = int(p[0])
+                    i += 1
+                    continue
+
+                # Shell line: "<angular_char> <n_prim> <scale>"
                 if len(p) >= 2 and p[0][0].isalpha():
                     l_char = p[0].lower()
                     n_prim = int(p[1])
@@ -115,25 +138,38 @@ def read_molden(fname):
         # ---- [MO] block -----------------------------------------------
         if s == '[MO]':
             i += 1
+            block = {}
+            sym = None
             while i < len(lines):
                 sl = lines[i].strip()
                 if sl.startswith('['):
                     break
-                if sl.startswith(('Sym=', 'Ene=', 'Spin=', 'Occup=')):
+                if sl.startswith('Sym='):
+                    if block:
+                        raw_mo.append((sym, block))
+                        block = {}
+                    sym = sl.split(None, 1)[1] if len(sl.split(None, 1)) > 1 else None
+                    i += 1
+                    continue
+                if sl.startswith(('Ene=', 'Spin=', 'Occup=')):
                     i += 1
                     continue
                 p = sl.split()
                 if len(p) >= 2:
                     try:
-                        coeffs.append(float(p[1]))
+                        idx = int(p[0])
+                        val = float(p[1])
+                        block[idx] = val
                     except ValueError:
                         pass
                 i += 1
+            if block:
+                raw_mo.append((sym, block))
             continue
 
         i += 1
 
-    return atoms, shells, coeffs
+    return atoms, shells, raw_mo
 
 
 def main():
@@ -144,27 +180,43 @@ def main():
     out = sys.argv[2]
     ngrid = int(sys.argv[3]) if len(sys.argv) > 3 else 60
 
-    atoms, shells, coeffs = read_molden(inp)
-    print(f"Atoms: {len(atoms)}  Shells: {len(shells)}  Coeffs: {len(coeffs)}")
+    atoms, shells, raw_mo = read_molden(inp)
 
     ao = []
     for (center, l, exps, cfs) in shells:
         for term in cart_terms(l):
             ao.append((center, l, term, exps, cfs))
-    print(f"Cartesian AOs: {len(ao)}")
-
     n_ao = len(ao)
-    if len(coeffs) < n_ao:
-        print(f"WARNING: fewer coeffs ({len(coeffs)}) than AOs ({n_ao}). "
-              f"Padding with zeros.")
-        coeffs = coeffs + [0.0] * (n_ao - len(coeffs))
 
-    # ---- Grid box: atom bounding box + margin -------------------------
+    print(f"Atoms: {len(atoms)}  Shells: {len(shells)}  "
+          f"MO blocks: {len(raw_mo)}  AOs: {n_ao}")
+
+    if len(raw_mo) == 0:
+        print("ERROR: no MO blocks found in input.")
+        sys.exit(1)
+
+    sym, block = raw_mo[0]
+    if len(raw_mo) > 1:
+        print(f"WARNING: {len(raw_mo)} MO blocks found; using the first "
+              f"(Sym={sym}). Extract a single block first if this is "
+              f"unintended.")
+    print(f"Using MO block: Sym={sym}  ({len(block)} coefficients)")
+
+    coeffs = np.zeros(n_ao)
+    n_placed = 0
+    for idx, val in block.items():
+        if 1 <= idx <= n_ao:
+            coeffs[idx - 1] = val
+            n_placed += 1
+    if n_placed < n_ao:
+        print(f"Note: {n_ao - n_placed} AO(s) had no coefficient "
+              f"(treated as zero).  This is normal for sparse blocks.")
+
     ax = np.array([a[1] for a in atoms])
     ay = np.array([a[2] for a in atoms])
     az = np.array([a[3] for a in atoms])
 
-    margin = 6.0                              # bohr
+    margin = 6.0
     xmin, xmax = ax.min() - margin, ax.max() + margin
     ymin, ymax = ay.min() - margin, ay.max() + margin
     zmin, zmax = az.min() - margin, az.max() + margin
@@ -181,7 +233,6 @@ def main():
     yg0 = ymin + np.arange(ngrid) * dy
     zg0 = zmin + np.arange(ngrid) * dz
 
-    # ---- Evaluate ------------------------------------------------
     print("Evaluating grid...")
     vals = np.zeros((ngrid, ngrid, ngrid))
 
@@ -201,9 +252,6 @@ def main():
         if k % 100 == 0:
             print(f"  AO {k}/{n_ao}")
 
-    # ---- L2 normalization ----------------------------------------
-    # Ensures ∫ |ψ|² dV = 1 on the grid, so a single isovalue produces
-    # a comparable isosurface for every cube.
     dV = dx * dy * dz
     norm2 = float(np.sum(vals * vals)) * dV
     if norm2 > 0.0:
@@ -215,7 +263,6 @@ def main():
     else:
         print("WARNING: cube has zero norm — skipping normalization.")
 
-    # ---- Write cube ------------------------------------------------
     print("Writing cube...")
     with open(out, 'w') as f:
         f.write("Cube from Molden\n")
@@ -231,7 +278,7 @@ def main():
         for ix in range(ngrid):
             for iy in range(ngrid):
                 for iz in range(ngrid):
-                    f.write(f"{vals[ix,iy,iz]:13.5e}")
+                    f.write(f"{vals[ix,iy,iz]:15.5e}")
                     count += 1
                     if count % 6 == 0:
                         f.write("\n")

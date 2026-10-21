@@ -119,7 +119,7 @@ contains
 
         call cp2k_split_paths(path, molden_path, log_path)
 
-        fix = 3
+        fix = 0
         ! fix overridden to 4 for CP2K
 
         if (present(bs)) then

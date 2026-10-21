@@ -68,14 +68,7 @@ contains
             allocate(s_mo_b(mos1%n_mo_b, mos2%n_mo_b))
             call mat_ge_mmm(mos1%cb, s_ao, mos2%cb, s_mo_b, transa='T')
         end if
-        if (trim(adjustl(path1)) == trim(adjustl(path2))) then
-            ! --- Self-overlap: identical wavefunctions, so S_mo must be identity.
-            !     The CP2K [5D7F] convention leaves off-diagonal contamination
-            !     that diagonal normalization cannot remove.  Setting S_mo = I
-            !     is mathematically exact for this case (see issue #8).
-            call set_identity_overlap(s_mo_a)
-            if (allocated(s_mo_b)) call set_identity_overlap(s_mo_b)
-        end if
+        ! Identity hack removed for testing.
 
         if (print_level >= 3) then
             write(stdout, '(5x,a)') 'Diagonal of the alpha MO overlap matrix: '

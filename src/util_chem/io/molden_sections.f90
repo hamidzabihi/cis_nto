@@ -155,7 +155,7 @@ contains
         ca = 0
         cb = 0
 
-        do while (i < nmo_a + nmo_b)
+        do while (i <= nmo_a + nmo_b)
             call readf%next(abort_on_eof=.false.)
             if (is_iostat_end(readf%iostat)) exit
             if (len_trim(readf%line) == 0) cycle
