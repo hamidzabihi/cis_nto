@@ -84,6 +84,11 @@ echo "  ---------------------------------------"
 echo "  ✓ Physical relaxation with CP2K. No state swaps."
 echo ""
 
+else
+    echo "  [SKIP] External di_vacancy dataset not found at $VAC"
+    echo "         (Sections 3, 4, and 6 require the 20-frame MD trajectory)"
+fi
+
 echo -e "${CYAN}${BOLD}================================================================${NC}"
 # -----------------------------------------------------------------
 # 7. CIS_NTO SVD ALGORITHM PROOF
