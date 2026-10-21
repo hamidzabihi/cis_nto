@@ -71,9 +71,6 @@ enable_language (C)
         include_directories(${CBLAS_INCLUDE_DIR})
     endif()
     find_library(CBLAS_LIBRARY NAMES cblas openblas)
-    if(CBLAS_LIBRARY)
-        set(LINALG_LIBS ${LINALG_LIBS} ${CBLAS_LIBRARY})
-    endif()
     set(LINALG_LIBS LAPACK::LAPACK ${CBLAS_LIBRARY})
   elseif(LINALG STREQUAL "MKL")
     if (BLAS_64)
@@ -122,4 +119,11 @@ enable_language (C)
   add_executable(convert.exe ${SOURCES_CONV})
   target_link_libraries(convert.exe ${LINALG_LIBS} theochemutil ${LINKLIBS})
 
-# CMake build targets cleaned.
+################################################################################
+# Check                                                                        #
+  file(GLOB SOURCES_TEST "test/unit_test/*f90")
+  add_custom_target(check COMMAND
+                    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cis_test.exe)
+  add_executable(cis_test.exe EXCLUDE_FROM_ALL ${SOURCES_TEST} ${SOURCES_OVLC})
+  add_dependencies(check cis_test.exe)
+  target_link_libraries(cis_test.exe theochemutil ${LINKLIBS})
