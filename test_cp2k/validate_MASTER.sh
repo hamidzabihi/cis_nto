@@ -39,7 +39,7 @@ echo "Proof that the ONTO algorithm yields exact identity for self-overlap."
 VAC="${VAC:-$HOME/Project_ML_BP_revision1/03-OVERLAPS/di_vacancy}"
 if [ -d "$VAC" ]; then
     cd "$VAC"
-    python3 "$(dirname "$0")/validate_overlap.py" 2>/dev/null | grep -A 23 "T1 — SELF-OVERLAP IDENTITY" | tail -n 15
+    python3 "$(dirname "$0")/validate_overlap.py" 2>/dev/null | grep -A 10 "T1 — SELF-OVERLAP IDENTITY" | head -n 12
     echo ""
     
     # -----------------------------------------------------------------
