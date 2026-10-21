@@ -36,7 +36,7 @@ echo ""
 # -----------------------------------------------------------------
 echo -e "${BOLD}[3/6] Overlap Identity (T1) - 20 Frames${NC}"
 echo "Proof that the ONTO algorithm yields exact identity for self-overlap."
-VAC="/home/hamid/Project_ML_BP_revision1/03-OVERLAPS/di_vacancy"
+VAC="${VAC:-$HOME/Project_ML_BP_revision1/03-OVERLAPS/di_vacancy}"
 cd "$VAC"
 python3 /home/hamid/cis_nto/test_cp2k/validate_overlap.py 2>/dev/null | grep -A 23 "T1 — SELF-OVERLAP IDENTITY" | tail -n 15
 echo ""
@@ -90,7 +90,7 @@ echo -e "${CYAN}${BOLD}=========================================================
 # -----------------------------------------------------------------
 echo -e "${BOLD}[7/7] cis_nto SVD Algorithm (Multi-Configurational Proof)${NC}"
 echo "Proof that cis_nto performed the SVD (CI weight != NTO eigenvalue for multi-config states)."
-cd /home/hamid/cis_nto/test_cp2k
+cd "$(dirname "$0")"
 cd mlbp
 python3 - << 'PYEOF'
 import re
