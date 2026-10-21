@@ -27,7 +27,7 @@ for tag in "${TAGS[@]}"; do
     nto="nto_${tag}.molden"
     [ -f "$nto" ] || { echo "  SKIP: $nto not found"; continue; }
     occ=$(awk '/^ *Sym=/  { s = $2 }
-               /^ *Occup=/{ v = $2 + 0; if (s ~ /^2/ && v > best) best = v }
+               /^ *Occup=/{ v = $2 + 0; if (s ~ /^1/ && v > best) best = v }
                END{ printf "%.4f", best }' "$nto")
     expected="${EXPECTED_OCC[$tag]}"
     if awk -v a="$occ" -v b="$expected" \

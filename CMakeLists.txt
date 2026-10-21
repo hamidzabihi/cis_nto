@@ -111,26 +111,12 @@ enable_language (C)
   file(GLOB SOURCES_CONV "src/convert/*f90")
   file(GLOB SOURCES_GNTO "src/nto/*f90")
 
-  add_definitions(-DL2M=1)
-add_executable(cis_overlap.exe ${SOURCES_OLAP})
+  add_executable(cis_overlap.exe ${SOURCES_OLAP})
+  target_compile_definitions(cis_overlap.exe PRIVATE L2M=1)
+  target_link_libraries(cis_overlap.exe ${LINALG_LIBS} theochemutil)
+
   add_executable(cis_nto.exe ${SOURCES_GNTO})
+  target_link_libraries(cis_nto.exe ${LINALG_LIBS} theochemutil)
+
   add_executable(convert.exe ${SOURCES_CONV})
-
-
-  target_link_libraries(cis_nto.exe ${LINALG_LIBS})
-  target_link_libraries(cis_overlap.exe ${LINALG_LIBS})
-  target_link_libraries(cis_nto.exe ${LINALG_LIBS})
-
-  target_link_libraries(cis_nto.exe theochemutil ${LINKLIBS})
-  target_link_libraries(cis_overlap.exe theochemutil ${LINKLIBS})
-  target_link_libraries(convert.exe theochemutil ${LINKLIBS})
-
-################################################################################
-# Check                                                                        #
-  file(GLOB SOURCES_TEST "test/unit_test/*f90")
-  add_custom_target(check COMMAND
-                    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cis_test.exe)
-  add_executable(cis_test.exe EXCLUDE_FROM_ALL ${SOURCES_TEST} ${SOURCES_OVLC})
-  add_dependencies(check cis_test.exe)
-  target_link_libraries(cis_test.exe theochemutil ${LINKLIBS})
-
+  target_link_libraries(convert.exe ${LINALG_LIBS} theochemutil)

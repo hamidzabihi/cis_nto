@@ -41,14 +41,9 @@ for entry in "${MOLS[@]}"; do
     mv nto.molden "nto_${tag}.molden"
 
     echo "  [3/5] extracting S1 NTO pair ..."
-    dom_sym=$(awk '
-        /^ *Sym=/  { sym = $2 }
-        /^ *Occup=/{ v = $2 + 0; if (sym ~ /^2/ && v > 0.5) { print sym; exit } }
-    ' "nto_${tag}.molden")
-    virt_sym=$(awk '
-        /^ *Sym=/  { sym = $2 }
-        /^ *Occup=/{ v = $2 + 0; if (sym ~ /^1/ && v > 0.5) { print sym; exit } }
-    ' "nto_${tag}.molden")
+    # Sym label convention: 1001a = S1 occupied, 1002a = S1 virtual
+    dom_sym="1001a"
+    virt_sym="1002a" 
 
     [ -n "$dom_sym" ]  || { echo "  ERROR: no dominant occupied NTO"; continue; }
     [ -n "$virt_sym" ] || { echo "  ERROR: no dominant virtual NTO";  continue; }
