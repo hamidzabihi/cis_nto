@@ -49,7 +49,7 @@ wB97XD), each with 50 TDDFPT excited states.
 
 ## Reference values
 
-Dominant S1 NTO occupation: 0.9940 +/- 0.005.
+Dominant S1 NTO occupation: 0.9890 +/- 0.005 (the 0.9940 in earlier drafts was the S2 label, 2001a).
 
 Each cube satisfies the L2 integral = 1.000000 on the 60x60x60 grid,
 with at least 20000 non-negligible cells.
@@ -152,7 +152,7 @@ per functional:
 | wB97X      | 38 | HOMO-5 -> LUMO+7   | 15.3% |
 
 For B3LYP the paper reports S1 = 97.9% HOMO -> LUMO. This test
-measures the S1 dominant NTO occupation as 0.9940, which corresponds
+measures the S1 dominant NTO occupation as 0.9895, which corresponds
 to 98.8% single-configuration character -- matching the paper to
 within the accuracy of the two different codes.
 

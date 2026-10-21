@@ -8,7 +8,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 cd "$HERE"
 
 TAG="B3LYP"
-EXPECTED_OCC="0.9940"
+EXPECTED_OCC="0.9890"
 TOL="0.005"
 MIN_NONZERO=20000
 
@@ -23,7 +23,7 @@ nto="nto_${TAG}.molden"
 [ -f "$nto" ] || { echo "  SKIP: $nto missing"; exit 1; }
 
 occ=$(awk '/^ *Sym=/  { s = $2 }
-           /^ *Occup=/{ v = $2 + 0; if (s ~ /^2/ && v > best) best = v }
+           /^ *Occup=/{ v = $2 + 0; if (s ~ /^1/ && v > best) best = v }
            END{ printf "%.4f", best }' "$nto")
 if awk -v a="$occ" -v b="$EXPECTED_OCC" -v t="$TOL" \
     'BEGIN{ d = a - b; exit !(d < t && d > -t) }'; then
@@ -37,7 +37,7 @@ echo
 echo "Checking cube integrals and nonzero counts..."
 for orb in s1_occ s1_virt homo lumo; do
     cube="cubes/${orb}_${TAG}.cube"
-    [ -f "$cube" ] || { echo "  SKIP: $cube"; continue; }
+    [ -f "$cube" ] || { echo "  FAIL: $cube missing"; fail=$((fail + 1)); continue; }
 
     read -r integral nonzero < <(python3 - "$cube" <<'PYEOF'
 import sys, numpy as np
@@ -76,3 +76,25 @@ if [ -f "$HERE/aggregate.py" ]; then
     echo "===== Aggregating all functional runs ====="
     python3 "$HERE/aggregate.py"
 fi
+
+# -----------------------------------------------------------------
+# Physics identity check: s1_occ must be HOMO-like, s1_virt LUMO-like
+# -----------------------------------------------------------------
+echo
+echo "Checking S1 NTO assignments against HOMO/LUMO..."
+for pair in "s1_occ homo" "s1_virt lumo"; do
+    set -- $pair
+    if [ -f "${1}_${TAG}.molden" ] && [ -f "${2}_${TAG}.molden" ]; then
+        ov=$(python3 ../compare_nto.py "${1}_${TAG}.molden" "${2}_${TAG}.molden" 2>/dev/null \
+             | awk -F'= ' '/\|</{print $2}')
+        if awk -v a="$ov" 'BEGIN{exit !(a > 0.99)}'; then
+            echo "  PASS  |<$1|$2>| = $ov"
+        else
+            echo "  FAIL  |<$1|$2>| = $ov  (expected > 0.99)"
+            fail=$((fail + 1))
+        fi
+    fi
+done
+
+if [ "$fail" -eq 0 ]; then echo; echo "  ALL CHECKS PASSED (incl. physics)"; exit 0
+else echo; echo "  $fail CHECK(S) FAILED"; exit 1; fi

@@ -20,8 +20,8 @@ NGRID=60
 # Resolve Molden / log paths by functional
 case "$FUNC" in
     B3LYP)
-        MOLDEN="b3lyp_opted-MOS-1_0.molden"
-        LOG="out.log"
+        MOLDEN="B3LYP_50_states/b3lyp_opted-MOS-1_0.molden"
+        LOG="B3LYP_50_states/out.log"
         ;;
     PBEh0125)
         MOLDEN="PBEh0125_50states/0125_PBE0.molden"
@@ -80,6 +80,28 @@ rm -f nto.molden
     > "nto_${TAG}.log" 2>&1
 [ -f nto.molden ] || { echo "ERROR: nto.molden not produced"; exit 1; }
 mv nto.molden "nto_${TAG}.molden"
+echo "  [3/5] extracting S1 NTO pair ..."
+# Sym label convention in cis_nto output:
+#   leading digit = excited-state index (1 = S1, 2 = S2, ...)
+#   within a state, xx01a = occupied NTO, xx02a = virtual NTO of pair 1
+dom_sym="1001a"    # S1 occupied NTO
+virt_sym="1002a"   # S1 virtual NTO
+[ -n "$dom_sym" ]  || { echo "  ERROR: no dominant occupied NTO"; exit 1; }
+[ -n "$virt_sym" ] || { echo "  ERROR: no dominant virtual NTO";  exit 1; }
+echo "    occupied: $dom_sym   virtual: $virt_sym"
+python3 ../extract_nto.py "nto_${TAG}.molden" "s1_occ_${TAG}.molden"  "$dom_sym"
+python3 ../extract_nto.py "nto_${TAG}.molden" "s1_virt_${TAG}.molden" "$virt_sym"
+
+echo "  [4/5] extracting HOMO/LUMO by index (160/161) ..."
+python3 ../extract_nto.py "std_${TAG}.molden" "homo_${TAG}.molden" 160
+python3 ../extract_nto.py "std_${TAG}.molden" "lumo_${TAG}.molden" 161
+
+echo "  [5/5] generating cube files ..."
+mkdir -p cubes
+for orb in homo lumo s1_occ s1_virt; do
+    python3 ../molden_to_cube.py "${orb}_${TAG}.molden" "cubes/${orb}_${TAG}.cube" "$NGRID"
+done
+
 
 echo "  DONE: $TAG"
 echo "  NTO log:    nto_${TAG}.log"

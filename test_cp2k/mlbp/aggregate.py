@@ -61,7 +61,7 @@ PAPER_REFS = {
 # holding the CP2K log for that functional.
 LOG_DIRS = {
     "PBEh0125":  "PBEh0125_50states",
-    "B3LYP":     None,             # not present in this dataset
+    "B3LYP":     ".",
     "PBE0":      "PBE0_50_states",
     "BHandHLYP": "BHandHLYP_50states",
     "CAM_B3LYP": "CAM_B3LYP_50_states",
