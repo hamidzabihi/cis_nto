@@ -37,18 +37,43 @@ echo ""
 echo -e "${BOLD}[3/6] Overlap Identity (T1) - 20 Frames${NC}"
 echo "Proof that the ONTO algorithm yields exact identity for self-overlap."
 VAC="${VAC:-$HOME/Project_ML_BP_revision1/03-OVERLAPS/di_vacancy}"
-cd "$VAC"
-python3 /home/hamid/cis_nto/test_cp2k/validate_overlap.py 2>/dev/null | grep -A 23 "T1 — SELF-OVERLAP IDENTITY" | tail -n 15
-echo ""
-
-# -----------------------------------------------------------------
-# 4. OVERLAP PHYSICS (T2, T3, T5, T6)
-# -----------------------------------------------------------------
-echo -e "${BOLD}[4/6] Overlap Physics Tracking (T5/T6)${NC}"
-echo "Proof that S1↔S2 is physical mixing and S1↔S4 is correctly isolated."
-python3 /home/hamid/cis_nto/test_cp2k/validate_overlap.py 2>/dev/null | grep -A 15 "T5 — DECAY RATE FIT" | head -n 12
-python3 /home/hamid/cis_nto/test_cp2k/validate_overlap.py 2>/dev/null | grep -A 12 "T6 — PHYSICS vs RESIDUAL"
-echo ""
+if [ -d "$VAC" ]; then
+    cd "$VAC"
+    python3 "$(dirname "$0")/validate_overlap.py" 2>/dev/null | grep -A 23 "T1 — SELF-OVERLAP IDENTITY" | tail -n 15
+    echo ""
+    
+    # -----------------------------------------------------------------
+    # 4. OVERLAP PHYSICS (T2, T3, T5, T6)
+    # -----------------------------------------------------------------
+    echo -e "${BOLD}[4/6] Overlap Physics Tracking (T5/T6)${NC}"
+    echo "Proof that S1↔S2 is physical mixing and S1↔S4 is correctly isolated."
+    python3 "$(dirname "$0")/validate_overlap.py" 2>/dev/null | grep -A 15 "T5 — DECAY RATE FIT" | head -n 12
+    python3 "$(dirname "$0")/validate_overlap.py" 2>/dev/null | grep -A 12 "T6 — PHYSICS vs RESIDUAL"
+    echo ""
+    
+    # -----------------------------------------------------------------
+    # 6. S1 ENERGY DRIFT
+    # -----------------------------------------------------------------
+    echo -e "${BOLD}[6/6] S1 State Coherence (Energy Drift over 20 Frames)${NC}"
+    echo "Proof that the parser correctly identifies the same physical state."
+    echo -e "  Frame | S1 Energy (eV) | Drift (meV)"
+    echo "  ---------------------------------------"
+    e1=""
+    for n in $(seq 1 20); do
+        [ -f "run_${n}.log" ] || continue
+        e=$(awk '/R-TDDFPT states of multiplicity 1/{f=1} f && /TDDFPT\| *1 /{print $3; exit}' "run_${n}.log")
+        [ -z "$e" ] && continue
+        [ -z "$e1" ] && e1=$e
+        drift=$(awk -v e="$e" -v e1="$e1" 'BEGIN{printf "%+.1f", (e-e1)*1000}')
+        printf "    %2d  | %14s | %s\n" "$n" "$e" "$drift"
+    done
+    echo "  ---------------------------------------"
+    echo "  ✓ Physical relaxation with CP2K. No state swaps."
+    echo ""
+else
+    echo "  [SKIP] External di_vacancy dataset not found at $VAC"
+    echo "         (Sections 3, 4, and 6 require the 20-frame MD trajectory)"
+fi
 
 # -----------------------------------------------------------------
 # 5. L2M EMPIRICAL SCALING (O(n^7))
@@ -63,31 +88,6 @@ echo "1_3_dimethyladamantane       |       46 |  11.8 s"
 echo "1_3_5_trimethyladamantane    |       50 |  15.2 s"
 echo "-> Di-vacancy extrapolation  |      155 | ~12 hrs (Intractable)"
 echo ""
-
-# -----------------------------------------------------------------
-# 6. S1 ENERGY DRIFT
-# -----------------------------------------------------------------
-echo -e "${BOLD}[6/6] S1 State Coherence (Energy Drift over 20 Frames)${NC}"
-echo "Proof that the parser correctly identifies the same physical state."
-echo -e "  Frame | S1 Energy (eV) | Drift (meV)"
-echo "  ---------------------------------------"
-e1=""
-for n in $(seq 1 20); do
-    [ -f "run_${n}.log" ] || continue
-    e=$(awk '/R-TDDFPT states of multiplicity 1/{f=1} f && /TDDFPT\| *1 /{print $3; exit}' "run_${n}.log")
-    [ -z "$e" ] && continue
-    [ -z "$e1" ] && e1=$e
-    drift=$(awk -v e="$e" -v e1="$e1" 'BEGIN{printf "%+.1f", (e-e1)*1000}')
-    printf "    %2d  | %14s | %s\n" "$n" "$e" "$drift"
-done
-echo "  ---------------------------------------"
-echo "  ✓ Physical relaxation with CP2K. No state swaps."
-echo ""
-
-else
-    echo "  [SKIP] External di_vacancy dataset not found at $VAC"
-    echo "         (Sections 3, 4, and 6 require the 20-frame MD trajectory)"
-fi
 
 echo -e "${CYAN}${BOLD}================================================================${NC}"
 # -----------------------------------------------------------------
@@ -125,7 +125,6 @@ print("\n✓ BHandHLYP divergence (0.8365 -> 0.9149) proves SVD works!")
 PYEOF
 cd ..
 echo ""
-
 echo -e "${CYAN}${BOLD}================================================================${NC}"
 echo -e "${CYAN}${BOLD}  >>> MASTER VALIDATION COMPLETE <<<${NC}"
 echo -e "${CYAN}${BOLD}  The CP2K interface successfully feeds CIS-type files,${NC}"
