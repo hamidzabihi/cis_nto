@@ -103,6 +103,7 @@ enable_language (C)
 
 ################################################################################
 # Build                                                                        #
+
   file(GLOB SOURCES_UTIL "src/util_chem/*/*f90" "src/util_fort/*f90")
   add_library(theochemutil STATIC ${SOURCES_UTIL})
   target_link_libraries(theochemutil ${LINALG_LIBS})
@@ -120,5 +121,4 @@ enable_language (C)
 
   add_executable(convert.exe ${SOURCES_CONV})
   target_link_libraries(convert.exe ${LINALG_LIBS} theochemutil ${LINKLIBS})
-
 
