@@ -35,3 +35,28 @@ test_cp2k/mlbp/cubes/*.cube
 !test_cp2k/mlbp/*.py
 !test_cp2k/mlbp/results.json
 *.bak_pre_*
+# Build artifacts
+build/
+*.o
+*.mod
+*.exe
+
+# Backups
+*.bak
+*.bak.*
+*.bak_pre_*
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Windows
+*.Zone.Identifier
+
+# Random test outputs
+LUMO
+HOMO
+nto_1.txt
+s_wf*
+s_ao
