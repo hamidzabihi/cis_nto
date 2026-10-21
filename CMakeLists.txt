@@ -74,7 +74,7 @@ enable_language (C)
     if(CBLAS_LIBRARY)
         set(LINALG_LIBS ${LINALG_LIBS} ${CBLAS_LIBRARY})
     endif()
-    set(LINALG_LIBS LAPACK::LAPACK)
+    set(LINALG_LIBS LAPACK::LAPACK ${CBLAS_LIBRARY})
   elseif(LINALG STREQUAL "MKL")
     if (BLAS_64)
       set(MKL_INTERFACE "ilp64")
@@ -120,4 +120,5 @@ enable_language (C)
 
   add_executable(convert.exe ${SOURCES_CONV})
   target_link_libraries(convert.exe ${LINALG_LIBS} theochemutil ${LINKLIBS})
+
 
