@@ -1,6 +1,6 @@
 # CIS_NTO — CP2K Interface Master Validation Report
 
-**Date:** Wed Oct 21 12:23:48 +0330 2026
+**Date:** Wed Oct 21 18:29:41 +0330 2026
 **Script dir:** `/home/hamid/cis_nto/test_cp2k`
 **Binary dir:** `/home/hamid/cis_nto/build/bin`
 **Data dir:** `/home/hamid/Project_ML_BP_revision1/03-OVERLAPS/di_vacancy`
@@ -150,7 +150,7 @@ S1↔S5      |  0.553 |         ↑ | PHYSICS(noisy) | fluctuating mixing, slope
   Rerun with ≥15 points for tighter classification.
 
 ==============================================================================
- DONE — artifacts in /home/hamid/Project_ML_BP_revision1/03-OVERLAPS/di_vacancy/py_validation_20261021_122352/
+ DONE — artifacts in /home/hamid/Project_ML_BP_revision1/03-OVERLAPS/di_vacancy/py_validation_20261021_182946/
 ```
 
 ## 7. S1 energy drift (all steps)
