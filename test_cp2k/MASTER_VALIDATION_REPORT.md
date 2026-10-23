@@ -148,7 +148,7 @@ S1↔S5      |  0.109 |        no | MIXED          | weak trend / noise
   Rerun with ≥15 points for tighter classification.
 
 ==============================================================================
- DONE — artifacts in /home/hamid/Project_ML_BP_revision1/03-OVERLAPS/di_vacancy/py_validation_20261023_070805/
+ DONE — artifacts in /home/hamid/Project_ML_BP_revision1/03-OVERLAPS/di_vacancy/py_validation_20261023_073018/
 ```
 
 ## 7. S1 Energy Fluctuations (300K Steps)

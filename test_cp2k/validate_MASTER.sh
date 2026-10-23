@@ -82,8 +82,9 @@ echo "\`\`\`" >> "$REPORT_FILE"
 echo -e "\n${BOLD}[8/9] NAMD Couplings & Hopping Probabilities${NC}"
 echo -e "\n## 8. NAMD Couplings (300K Steps)\n" >> "$REPORT_FILE"
 echo "This table proves the pipeline is ready for FSSH dynamics by calculating the Time-Derivative Non-Adiabatic Coupling (NAC) and hopping probabilities at each femtosecond." >> "$REPORT_FILE"
-echo -e "\n| Time (fs) | State | Energy (eV) | Max NAC (fs⁻¹) | Max Hop Prob |" >> "$REPORT_FILE"
-echo "|-----------|-------|-------------|----------------|--------------|" >> "$REPORT_FILE"
+# FIXED: Added tee to headers
+echo -e "\n| Time (fs) | State | Energy (eV) | Max NAC (fs⁻¹) | Max Hop Prob |" | tee -a "$REPORT_FILE"
+echo "|-----------|-------|-------------|----------------|--------------|" | tee -a "$REPORT_FILE"
 
 ( cd "$VAC" && python3 - <<'PYEOF_NAMD'
 import numpy as np, pickle, sys
@@ -126,8 +127,9 @@ PYEOF_NAMD
 echo -e "\n${BOLD}[9/9] CI Topology Stability${NC}"
 echo -e "\n## 9. CI Topology Stability (State 1)\n" >> "$REPORT_FILE"
 echo "Proves that the TDDFPT solver does not randomly swap the character of State 1." >> "$REPORT_FILE"
-echo -e "\n| Time (fs) | S1 Excitations | S1 Dominant Transition |" >> "$REPORT_FILE"
-echo "|-----------|----------------|------------------------|" >> "$REPORT_FILE"
+# FIXED: Added tee to headers
+echo -e "\n| Time (fs) | S1 Excitations | S1 Dominant Transition |" | tee -a "$REPORT_FILE"
+echo "|-----------|----------------|------------------------|" | tee -a "$REPORT_FILE"
 
 ( cd "$VAC" && python3 - <<'PYEOF_TOP'
 import pickle
