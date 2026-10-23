@@ -48,8 +48,8 @@ def run_overlap(m1, l1, m2, l2, tnex=1, timeout=90):
 # --- Discover complete frames ---
 frames = []
 for n in range(1, 100):
-    m = VAC / f'p4-di-PBE_{n}-MOS-1_0.molden'
-    l = VAC / f'run_{n}.log'
+    m = VAC / f'p4-di-PBE_cont_{n}-MOS-1_0.molden'
+    l = VAC / f'run_cont_{n}.log'
     if not (m.exists() and l.exists()): break
     try:
         with open(l) as f:
@@ -72,8 +72,8 @@ print(f"{'frame':>5} | {'GS':>7} {'S1':>7} {'S2':>7} {'S3':>7} {'S4':>7} {'S5':>
 print(THIN)
 t1_pass = 0
 for n in frames:
-    m = f'p4-di-PBE_{n}-MOS-1_0.molden'
-    l = f'run_{n}.log'
+    m = f'p4-di-PBE_cont_{n}-MOS-1_0.molden'
+    l = f'run_cont_{n}.log'
     M, err = run_overlap(m, l, m, l, tnex=3)
     if M is None:
         print(f"{n:>5} | ERROR: {err}")
@@ -97,8 +97,8 @@ print(THIN)
 t2_pairs = []
 for k in range(len(frames) - 1):
     a, b = frames[k], frames[k+1]
-    M, err = run_overlap(f'p4-di-PBE_{a}-MOS-1_0.molden', f'run_{a}.log',
-                         f'p4-di-PBE_{b}-MOS-1_0.molden', f'run_{b}.log', tnex=1)
+    M, err = run_overlap(f'p4-di-PBE_cont_{a}-MOS-1_0.molden', f'run_cont_{a}.log',
+                         f'p4-di-PBE_cont_{b}-MOS-1_0.molden', f'run_cont_{b}.log', tnex=1)
     if M is None:
         print(f"{a}→{b:>4} | ERROR: {err}")
         continue
@@ -120,8 +120,8 @@ print(THIN)
 t3_pairs = []
 for k in range(1, len(frames)):
     b = frames[k]
-    M, err = run_overlap(f'p4-di-PBE_{first}-MOS-1_0.molden', f'run_{first}.log',
-                         f'p4-di-PBE_{b}-MOS-1_0.molden', f'run_{b}.log', tnex=1)
+    M, err = run_overlap(f'p4-di-PBE_cont_{first}-MOS-1_0.molden', f'run_cont_{first}.log',
+                         f'p4-di-PBE_cont_{b}-MOS-1_0.molden', f'run_cont_{b}.log', tnex=1)
     if M is None:
         print(f"{first}→{b:>4} | ERROR: {err}")
         continue
