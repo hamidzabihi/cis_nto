@@ -1,3 +1,4 @@
+#include <ctime>
 #include "easywfo_core.hpp"
 #include <iostream>
 
