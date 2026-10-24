@@ -1,0 +1,104 @@
+     -------------------------------------------------------------
+                          cis_overlap program                     
+                              version 1.1                         
+                                                                  
+      Program compiled on Oct 24 2026 19:55:11.          
+     -------------------------------------------------------------
+
+ Using 8 threads.
+
+ Input for bra orbitals/states: 
+     Format: turbomole
+     Path: .
+ Input for ket orbitals/states: 
+     Format: turbomole
+     Path: .
+
+ Computing AO overlaps...
+     Number of bra cartesian/spherical AOs: 19 18
+     Number of ket cartesian/spherical AOs: 19 18
+
+ Computing MO overlaps...
+     Number of bra of AOs/MOs: 18 18
+     Number of ket of AOs/MOs: 18 18
+
+ Properties for bra states:
+     Restricted calculation.
+     Number of excited states:           5
+     Number of orbitals:                 18
+     Number of occupied orbitals:        5
+     Number of virtual orbitals:         13
+     Number of active occupied orbitals: 5
+     Number of active virtual orbitals:  13
+
+ Properties for ket states:
+     Restricted calculation.
+     Number of excited states:           5
+     Number of orbitals:                 18
+     Number of occupied orbitals:        5
+     Number of virtual orbitals:         13
+     Number of active occupied orbitals: 5
+     Number of active virtual orbitals:  13
+
+   Norms of bra spin alpha occupied orbitals inket basis:
+     1.000E+00  1.000E+00  1.000E+00  1.000E+00  1.000E+00
+
+   Norms of ket spin alpha occupied orbitals inbra basis:
+     1.000E+00  1.000E+00  1.000E+00  1.000E+00  1.000E+00
+
+   Initial norms of bra excited states:
+       1.000E+00  1.000E+00  1.000E+00  1.000E+00  1.000E+00
+
+   Initial norms of ket excited states:
+       1.000E+00  1.000E+00  1.000E+00  1.000E+00  1.000E+00
+
+ Computing WF overlaps...
+
+     Using L2M algorithm.
+
+     ---- start cis_overlap_l2m subroutine ----
+
+     Computing level 1 minors...
+
+     Computing determinant blocks...
+     Status:
+         RS block...
+         SR block...
+         SS block...
+[ssblock_lu] Computing l2minors...
+[SSBLOCK] Execution times:
+	scale:         0.0000057 sec
+	l2minors:      0.0189723 sec
+	l2minor * wf2: 0.0000553 sec
+	wf1 * tmp:     0.0000062 sec
+	wf1 * wf2:     0.0000078 sec
+	msum * tmp:    0.0000050 sec
+
+     cis_overlap_l2m time:
+          L1 minors                 - time (sec):        0.0000
+          RS and SR blocks          - time (sec):        0.0000
+          L2 minors and SS block    - time (sec):        0.0350
+                                                 --------------
+          Total WF overlap          - time (sec):        0.0351
+
+     ---- end cis_overlap_l2m subroutine ----
+
+ Raw overlap matrix:
+       1.000000 -0.000000  0.000000  0.000000  0.000000  0.000000
+      -0.000000  1.000000 -0.000000  0.000000 -0.000000 -0.000000
+       0.000000 -0.000000  1.000000  0.000000  0.000000  0.000000
+       0.000000  0.000000  0.000000  1.000000 -0.000000 -0.000000
+       0.000000 -0.000000  0.000000 -0.000000  1.000000  0.000416
+       0.000000 -0.000000  0.000000 -0.000000  0.000416  1.000000
+ Writing WF overlap matrix to s_wf.
+
+ Program time:
+      Input                     - time (sec):        0.0028
+      AO overlap                - time (sec):        0.0003
+      MO overlap                - time (sec):        0.0000
+      WF overlap                - time (sec):        0.0352
+                                             --------------
+      Total                     - time (sec):        0.0386
+
+ cis_overlap done                                             
+ -------------------------------------------------------------

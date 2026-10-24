@@ -1,0 +1,5 @@
+[  1%] Building Fortran object CMakeFiles/theochemutil.dir/src/util_chem/cis/cis_overlap_l2m.f90.o
+[  3%] Linking Fortran static library lib/libtheochemutil.a
+[ 77%] Built target theochemutil
+[ 79%] Linking Fortran executable bin/cis_overlap-opt-gauss.exe
+[100%] Built target cis_overlap-opt-gauss.exe

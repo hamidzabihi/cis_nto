@@ -1,0 +1,112 @@
+
+         ---- start ssblock subroutine ----
+
+         ssblock time:
+             L2 minors                  - time (sec): 0.0887 
+             Determinants from minors   - time (sec): 0.0000 
+             Final sum                  - time (sec): 0.0000 
+                                                     --------------
+             Total                      - time (sec): 0.0000 
+         ---- end ssblock subroutine ----
+     -------------------------------------------------------------
+                          cis_overlap program                     
+                              version 1.1                         
+                                                                  
+      Program compiled on Oct 24 2026 18:03:01.          
+     -------------------------------------------------------------
+
+ Using 8 threads.
+
+ Input for bra orbitals/states: 
+     Format: turbomole
+     Path: .
+ Input for ket orbitals/states: 
+     Format: turbomole
+     Path: .
+
+ Computing AO overlaps...
+     Number of bra cartesian/spherical AOs: 19 18
+     Number of ket cartesian/spherical AOs: 19 18
+
+ Computing MO overlaps...
+     Number of bra of AOs/MOs: 18 18
+     Number of ket of AOs/MOs: 18 18
+
+ Properties for bra states:
+     Restricted calculation.
+     Number of excited states:           5
+     Number of orbitals:                 18
+     Number of occupied orbitals:        5
+     Number of virtual orbitals:         13
+     Number of active occupied orbitals: 5
+     Number of active virtual orbitals:  13
+
+ Properties for ket states:
+     Restricted calculation.
+     Number of excited states:           5
+     Number of orbitals:                 18
+     Number of occupied orbitals:        5
+     Number of virtual orbitals:         13
+     Number of active occupied orbitals: 5
+     Number of active virtual orbitals:  13
+
+   Norms of bra spin alpha occupied orbitals in ket basis:
+     1.000E+00  1.000E+00  1.000E+00  1.000E+00  1.000E+00
+
+   Norms of ket spin alpha occupied orbitals in bra basis:
+     1.000E+00  1.000E+00  1.000E+00  1.000E+00  1.000E+00
+
+   Initial norms of bra excited states:
+       1.000E+00  1.000E+00  1.000E+00  1.000E+00  1.000E+00
+
+   Initial norms of ket excited states:
+       1.000E+00  1.000E+00  1.000E+00  1.000E+00  1.000E+00
+
+ Computing WF overlaps...
+
+     Using L2M algorithm.
+
+     ---- start cis_overlap_l2m subroutine ----
+
+     Computing level 1 minors...
+
+     Computing determinant blocks...
+     Status:
+         RS block...
+         SR block...
+         SS block...
+         Computing level 2 minors...
+             occupied orbital 1/5 time: .0756
+             occupied orbital 2/5 time: .0130
+             occupied orbital 3/5 time: .0000
+             occupied orbital 4/5 time: .0000
+             occupied orbital 5/5 time: .0000
+
+     cis_overlap_l2m time:
+          L1 minors                 - time (sec):        0.0001
+          RS and SR blocks          - time (sec):        0.0396
+          L2 minors and SS block    - time (sec):        0.0888
+                                                 --------------
+          Total                     - time (sec):        0.1286
+
+     ---- end cis_overlap_l2m subroutine ----
+
+ Raw overlap matrix:
+       1.000000 -0.000000  0.000000  0.000000  0.000000  0.000000
+      -0.000000  1.000000 -0.000000  0.000000 -0.000000 -0.000000
+       0.000000 -0.000000  1.000000  0.000000  0.000000  0.000000
+       0.000000  0.000000  0.000000  1.000000 -0.000000 -0.000000
+       0.000000 -0.000000  0.000000 -0.000000  1.000000  0.000416
+       0.000000 -0.000000  0.000000 -0.000000  0.000416  1.000000
+ Writing WF overlap matrix to s_wf.
+
+ Program time:
+      Input                     - time (sec):        0.0157
+      AO overlap                - time (sec):        0.0005
+      MO overlap                - time (sec):        0.0001
+      WF overlap                - time (sec):        0.1286
+                                             --------------
+      Total                     - time (sec):        0.1453
+
+ cis_overlap done                                             
+ -------------------------------------------------------------

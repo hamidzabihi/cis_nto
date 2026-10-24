@@ -58,7 +58,7 @@ contains
         real(dp), allocatable :: l1rminor(:, :)
         ! External routines
         external :: ssblock
-        integer, external :: mkl_get_max_threads
+        integer, external :: omp_get_max_threads
         integer :: num_threads
         integer :: i
         real(dp), external :: omp_get_wtime
@@ -106,8 +106,8 @@ contains
         end if
 
         time0 = omp_get_wtime()
-        num_threads = mkl_get_max_threads()
-        call mkl_set_num_threads(1)
+        num_threads = omp_get_max_threads()
+        call omp_set_num_threads(1)
         if (print_level >= 2) then
             write(stdout, *)
             if (beta) then
@@ -140,7 +140,7 @@ contains
         if (print_level >= 2) write(stdout, '(9x,a)') 'SR block...'
         call srblock(s_mo_a, no_a, nv_a1, nwf_1, wf_a1, l1rminor, sr_a)
         time_rs_sr = omp_get_wtime() - time0
-        call mkl_set_num_threads(num_threads)
+        call omp_set_num_threads(num_threads)
         time0 = omp_get_wtime()
         if (print_level >= 2) write(stdout, '(9x,a)') 'SS block...'
         flush(stdout)
@@ -152,8 +152,8 @@ contains
 
         if (beta) then
             time0 = omp_get_wtime()
-            num_threads = mkl_get_max_threads()
-            call mkl_set_num_threads(1)
+            num_threads = omp_get_max_threads()
+            call omp_set_num_threads(1)
             if (print_level >= 2) then
                 write(stdout, *)
                 write(stdout, '(5x,a)') 'Computing beta level 1 minors...'
@@ -177,7 +177,7 @@ contains
             if (print_level >= 2) write(stdout, '(9x,a)') 'SR block...'
             call srblock(s_mo_b, no_b, nv_b1, nwf_1, wf_b1, l1rminor, sr_b)
             time_rs_sr = time_rs_sr + omp_get_wtime() - time0
-            call mkl_set_num_threads(num_threads)
+            call omp_set_num_threads(num_threads)
             time0 = omp_get_wtime()
             if (print_level >= 2) write(stdout, '(9x,a)') 'SS block...'
             flush(stdout)
