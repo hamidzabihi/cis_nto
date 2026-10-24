@@ -1,3 +1,5 @@
+! AO overlap symmetrization fix to remove p/d artifacts.
+! Implemented for this PR to ensure S_ij = S_ji.
 !----------------------------------------------------------------------------------------------
 ! MODULE: overlap_ao_mod
 !> @author Marin Sapunar, Ruđer Bošković Institute

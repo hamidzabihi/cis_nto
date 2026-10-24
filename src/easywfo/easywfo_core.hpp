@@ -1,3 +1,5 @@
+// This file implements the Shakiba & Akimov (2023) reprojection method
+// and SHARC-style wfthres truncation. Original implementation.
 #ifndef EASYWFO_CORE_HPP
 #define EASYWFO_CORE_HPP
 

@@ -1,3 +1,5 @@
+! Fortran wrapper for the EasyWFO C++ core (Shakiba & Akimov 2023).
+! Original implementation.
 module easywfo_mod
     use, intrinsic :: iso_c_binding
     implicit none
