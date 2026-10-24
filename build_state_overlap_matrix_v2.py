@@ -73,3 +73,5 @@ for i in range(1, 20):
         extra += f"  n_swaps={n_swaps}"
     print(f"{i:>2}->{j:<2}: diag ∈ [{diag.min():.6f},{diag.max():.6f}]  "
           f"max off = {off:.4e}{extra}")
+
+# Trigger PR diff refresh
