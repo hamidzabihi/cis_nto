@@ -72,3 +72,4 @@ src/util_chem/l2m/.backup-*/
 src/util_chem/l2m/UPSTREAM_BASE
 src/util_chem/l2m/UPSTREAM_OPT_MINOR
 build/l2m_test/
+test/test_cases/refs/l2m_validation/
