@@ -1,3 +1,5 @@
+enable_language(CXX)
+set(CMAKE_CXX_STANDARD 17)
 cmake_minimum_required (VERSION 3.18)
 project (NAD_program)
 enable_language (Fortran)
@@ -24,6 +26,7 @@ enable_language (C)
   set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/include)
 
   include_directories(${CMAKE_Fortran_MODULE_DIRECTORY})
+include_directories(${CMAKE_SOURCE_DIR}/src/easywfo/eigen)
   link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 
@@ -69,6 +72,7 @@ enable_language (C)
     find_path(CBLAS_INCLUDE_DIR cblas.h PATHS /usr/include /usr/include/x86_64-linux-gnu /usr/include/openblas)
     if(CBLAS_INCLUDE_DIR)
         include_directories(${CBLAS_INCLUDE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/src/easywfo/eigen)
     endif()
     find_library(CBLAS_LIBRARY NAMES cblas openblas)
     set(LINALG_LIBS LAPACK::LAPACK ${CBLAS_LIBRARY})
@@ -109,9 +113,9 @@ enable_language (C)
   file(GLOB SOURCES_CONV "src/convert/*f90")
   file(GLOB SOURCES_GNTO "src/nto/*f90")
 
-  add_executable(cis_overlap.exe ${SOURCES_OLAP})
+  add_executable(cis_overlap.exe src/easywfo/easywfo_bridge.cpp src/easywfo/easywfo_mod.f90 ${SOURCES_OLAP})
   target_compile_definitions(cis_overlap.exe PRIVATE L2M=1)
-  target_link_libraries(cis_overlap.exe ${LINALG_LIBS} theochemutil ${LINKLIBS})
+  target_link_libraries(cis_overlap.exe stdc++ ${LINALG_LIBS} theochemutil ${LINKLIBS})
 
   add_executable(cis_nto.exe ${SOURCES_GNTO})
   target_link_libraries(cis_nto.exe ${LINALG_LIBS} theochemutil ${LINKLIBS})
