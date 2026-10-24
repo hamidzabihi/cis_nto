@@ -109,12 +109,18 @@ include_directories(${CMAKE_SOURCE_DIR}/src/easywfo/eigen)
   add_library(theochemutil STATIC ${SOURCES_UTIL})
   target_link_libraries(theochemutil ${LINALG_LIBS})
 
-  file(GLOB SOURCES_OLAP "src/overlap/*f90" "src/util_chem/l2m/*c")
+  file(GLOB SOURCES_OLAP
+    "src/overlap/*f90"
+    "src/util_chem/l2m/*c"
+    "src/util_chem/l2m/*f90"
+    "src/util_chem/cis/cis_overlap_l2m.f90"
+)
   file(GLOB SOURCES_CONV "src/convert/*f90")
   file(GLOB SOURCES_GNTO "src/nto/*f90")
 
   add_executable(cis_overlap.exe src/easywfo/easywfo_bridge.cpp src/easywfo/easywfo_mod.f90 ${SOURCES_OLAP})
   target_compile_definitions(cis_overlap.exe PRIVATE L2M=1)
+target_compile_options(cis_overlap.exe PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-cpp>)
   target_link_libraries(cis_overlap.exe stdc++ ${LINALG_LIBS} theochemutil ${LINKLIBS})
 
   add_executable(cis_nto.exe ${SOURCES_GNTO})
