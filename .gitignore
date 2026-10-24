@@ -62,3 +62,13 @@ s_wf*
 s_ao
 diag_2026*
 src/easywfo/eigen/
+
+# Session artifacts — not for PR
+ref/
+build.configure.log
+build.log
+UPSTREAM_CIS_NTO_COMMIT
+src/util_chem/l2m/.backup-*/
+src/util_chem/l2m/UPSTREAM_BASE
+src/util_chem/l2m/UPSTREAM_OPT_MINOR
+build/l2m_test/
