@@ -82,3 +82,33 @@ test_cisd/*.dSYM
 
 # Vendored references (should live in ~/refs, not in repo)
 libwfa/
+# Fortran build artifacts
+*.o
+*.mod
+test_cisd/benchmark_l4m
+test_cisd/check_l4m_extended
+test_cisd/check_multi
+test_cisd/check_real
+test_cisd/check_real_tri
+test_cisd/check_trunc
+
+# Backup files
+*.pre_*
+*.pre_cache
+*.pre_refactor
+*.pre_22_schur
+
+# Scratch backups
+cisd_l4m_validated_backup.tar.gz
+email_to_marin.txt
+demo_api.py
+*.o
+*.mod
+*.pre_*
+cisd_l4m_validated_backup.tar.gz
+test_cisd/benchmark_l4m
+test_cisd/check_l4m_extended
+test_cisd/check_multi
+test_cisd/check_real
+test_cisd/check_real_tri
+test_cisd/check_trunc
