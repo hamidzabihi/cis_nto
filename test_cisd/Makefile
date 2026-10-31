@@ -43,3 +43,13 @@ check_multi: check_multi.o cis_overlap_cisd.o cis_overlap_cisd_l4m.o cis_overlap
 	$(FC) $(FFLAGS) -o $@ $^ $(LDFLAGS)
 check_multi.o: check_multi.f90
 	$(FC) $(FFLAGS) -I$(MOD_DIR) -c $< -o $@
+
+check_trunc: check_trunc.o cis_overlap_cisd.o cis_overlap_cisd_l4m.o cis_overlap_cisd_l4m_fast.o
+	$(FC) $(FFLAGS) -o $@ $^ $(LDFLAGS)
+check_trunc.o: check_trunc.f90
+	$(FC) $(FFLAGS) -I$(MOD_DIR) -c $< -o $@
+
+check_real_tri: check_real_tri.o cis_overlap_cisd.o cis_overlap_cisd_l4m.o cis_overlap_cisd_l4m_fast.o
+	$(FC) $(FFLAGS) -o $@ $^ $(LDFLAGS)
+check_real_tri.o: check_real_tri.f90
+	$(FC) $(FFLAGS) -I$(MOD_DIR) -c $< -o $@
