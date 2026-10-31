@@ -230,3 +230,24 @@ cat >> RESULTS.md << 'EOF'
 | :--- | :--- | :--- | :--- |
 | 60 | 62050 | 2762 | **22.46x** |
 | 100 | ~111000 | 21769 | 5.12x |
+
+
+
+## Singles-NTO + Doubles-L4M Hybrid vs Pure-NTO
+Real amyloid case (amyloid_t3_d0.05_n50.txt): 11 singles, 23 doubles, 50 total determinants.
+Exact CISD overlap: S_full = 0.6365037700
+
+| Method | N_nto | Error | S_hybrid |
+| :--- | :--- | :--- | :--- |
+| Hybrid (L4M doubles exact) | 2 | 2.1e-11 | 0.6365037700 |
+| Pure NTO | 5 | 1.9e-02 | 0.6177330180 |
+| Pure NTO | 8 | 1.7e-03 | 0.6348252973 |
+| Pure NTO | 10 | 8.3e-06 | 0.6364954511 |
+| Pure NTO | 15 | 1.4e-04 | 0.6366483183 |
+
+**Killer finding:** The hybrid reaches machine precision at 2 NTO pairs (for the singles), while pure NTO at ANY tested compression level never beats 8e-06. Pure NTO compresses the doubles block, which is not low-rank — so it destroys accuracy. L4M's exact treatment of doubles is essential.
+
+## Note on ML Surrogates (Honest Scope)
+We attempted residual-learning surrogates for the Schur determinant using "row excitation" W blocks extracted from real amyloid MO overlaps. A diagnostic revealed that 38% of these blocks produce det(I+W) < 0, which is unphysical (the random row-picking generates excitations between occupied orbitals rather than between occupied and virtual). We do NOT include a "residual learning on real amyloid data" claim in the manuscript.
+
+The ML result reported in the paper is from `prototype_ml_schur.py`, which trains on random symmetric W blocks with det(I+W) ∈ [0.9, 1.1] and achieves a mean absolute error of 9.0e-04 (R² = 0.999). That is an honest synthetic-input result, not an amyloid result.
